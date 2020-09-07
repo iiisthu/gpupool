@@ -78,6 +78,14 @@ Docker镜像仓库位置：`172.16.112.173:30006/library/`。以下是提供的�
 |ubuntu-tensorflow|1.14.1, 2.3.0|是|Tensorflow版本1.14.1/2.3.0，CUDA版本10.1|
 |ubuntu-pytorch|1.5.0|是|Pytorch版本1.5.0，CUDA版本10.1|
 
+为了便于复制，这里列出yaml中镜像一行的常用选择
+
+```yaml
+image: 172.16.112.173:30006/library/ubuntu-tensorflow:2.3.0
+image: 172.16.112.173:30006/library/ubuntu-tensorflow:1.14.1
+image: 172.16.112.173:30006/library/ubuntu-pytorch:1.5.0
+```
+
 ### 操作容器
 
 以创建一个运行着支持 CUDA 和 Tensorflow 的 Ubuntu 18.04 容器为例。首先创建yaml配置文件（假设命名为myconfig.yaml，参考ubuntu-tf-example.yaml），之后根据配置部署：
@@ -103,6 +111,20 @@ kubectl exec -it my-first-ubuntu-tf-75b9d4ff7d-grk42 -- bash
 > **_NOTE:_** 查看是否启用了GPU支持可以使用`orion-smi`命令（`nvidia-smi`指令无效），但虚拟的GPU只有处于运行时才会显示。可以用`screen`或者`nohup`等命令后台执行GPU命令时查看。
 
 > **_NOTE:_** 一机多卡情形下，开启的POD中虚拟显卡可能和虚拟CPU位于不同的物理机，需要注意CPU和GPU之间数据转移的效率问题。
+
+测试成功获取了虚拟 GPU：
+
+```bash
+# pytorch
+$ python -c "import torch; print(torch.cuda.is_available())"
+...
+True
+
+# tensorflow
+$ python -c "import tensoflow as tf; print(tf.test.is_gpu_available())"
+...
+True
+```
 
 删除容器：
 
