@@ -110,6 +110,8 @@ kubectl exec -it my-first-ubuntu-tf-75b9d4ff7d-grk42 -- bash
 kubectl delete deployment my-first-ubuntu-tf
 ```
 
+TDDO: 完善持久化存储的内容
+
 <!-- ### 持久化存储
 
 POD 的本地文件是临时的，在每次重启（手动或失败重启）后都会恢复到最初的镜像状态。为了保持在 POD 中做的状态变化（例如创建了数据文件、日志文件等），需要向集群申请额外的存储资源 PVC。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。
