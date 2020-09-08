@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: share-pvc-demo
+  name: my-pvc-demo
 spec:
   storageClassName: managed-nfs-storage
   accessModes:
@@ -55,8 +55,8 @@ spec:
           mountPath: /mnt/data1
         - name: my-local-disk-2
           mountPath: /mnt/data2
-        - name: share-pvc
-          mountPath: /share
+        - name: my-pvc
+          mountPath: /pvc
       volumes:
         - name: my-local-disk-1
           hostPath:
@@ -64,6 +64,6 @@ spec:
         - name: my-local-disk-2
           hostPath:
             path: /data2
-        - name: share-pvc
+        - name: my-pvc
           persistentVolumeClaim:
-            claimName: share-pvc-demo
+            claimName: my-pvc-demo

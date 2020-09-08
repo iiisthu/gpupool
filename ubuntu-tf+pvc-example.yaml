@@ -52,7 +52,7 @@ spec:
                 fieldPath: metadata.uid
         volumeMounts:
         - name: my-pvc
-          mountPath: /share
+          mountPath: /pvc
 
       volumes:
         - name: my-pvc
