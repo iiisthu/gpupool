@@ -169,42 +169,11 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 #### 实测POD内存储性能
 
-##### Share目录
-
-写入
-root@k8sdeploy-n181:/share/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 56.7821 s, 43.3 MB/s
-
-读取
-root@k8sdeploy-n181:/share/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 33.293 s, 73.8 MB/s
-
-##### /mnt/data1目录
-写入
-root@k8sdeploy-n181:/mnt/data1/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 4.47296 s, 549 MB/s
-
-读取
-root@k8sdeploy-n181:/mnt/data1/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 3.09478 s, 794 MB/s
-
-##### /mnt/data2目录
-写入
-root@k8sdeploy-n181:/mnt/data2/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 11.2952 s, 218 MB/s
-
-读取
-root@k8sdeploy-n181:/mnt/data2/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
-300000+0 records in
-300000+0 records out
-2457600000 bytes (2.5 GB, 2.3 GiB) copied, 45.7348 s, 53.7 MB/s
+|目录|方式|性能|
+|---|---|---|
+|`/share`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 56.7821 s, 43.3 MB/s|
+|`/share`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 33.293 s, 73.8 MB/s|
+|`/mnt/data1`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 4.47296 s, 549 MB/s|
+|`/mnt/data1`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 3.09478 s, 794 MB/s|
+|`/mnt/data2`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 11.2952 s, 218 MB/s|
+|`/mnt/data2`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 45.7348 s, 53.7 MB/s|
