@@ -158,11 +158,53 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 #### 挂载本地缓存SSD
 
-每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。（data1应该能到几百兆每秒，data2能到几个GB每秒）。
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。实测性能请见下边的测试（目前data2性能似乎有些问题，会尽快修复）。
 本地磁盘只做临时缓存用，并不保证容错，每次重启POD的时候，可能会被清空。建议和持久盘配合使用，推荐的用法是：
 
 * 启动POD的时候，把需要的数据从上边的share磁盘或者自己的PVC拷贝到这个缓存 （可以用rsync命令）
 * 用缓存的数据来跑程序，结果也写到这个缓存中。
 * 关闭POD前，把结果拷贝到PVC中去（用rsync命令）。
 
-挂载本地磁盘参考`ubuntu-tf+local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf+local-disk+pvc-example`。
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考`ubuntu-tf+local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf+local-disk+pvc-example`。在这两个例子中，两个SSD盘分别挂在/mnt/data1和/mnt/data2两个目录下。
+
+#### 实测POD内存储性能
+
+##### Share目录
+
+写入
+root@k8sdeploy-n181:/share/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 56.7821 s, 43.3 MB/s
+
+读取
+root@k8sdeploy-n181:/share/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 33.293 s, 73.8 MB/s
+
+##### /mnt/data1目录
+写入
+root@k8sdeploy-n181:/mnt/data1/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 4.47296 s, 549 MB/s
+
+读取
+root@k8sdeploy-n181:/mnt/data1/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 3.09478 s, 794 MB/s
+
+##### /mnt/data2目录
+写入
+root@k8sdeploy-n181:/mnt/data2/xuw# time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 11.2952 s, 218 MB/s
+
+读取
+root@k8sdeploy-n181:/mnt/data2/xuw# dd if=test.dbf bs=8k count=300000 iflag=direct of=/dev/null 
+300000+0 records in
+300000+0 records out
+2457600000 bytes (2.5 GB, 2.3 GiB) copied, 45.7348 s, 53.7 MB/s
