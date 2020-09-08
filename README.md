@@ -140,14 +140,14 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 #### 直接挂载 NFS 共享盘
 
-集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录，请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`）。通过直接挂载NFS共享盘的方式参考`ubuntu-tf-nfs-direct-example.yaml`。
+集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录，请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`）。通过直接挂载NFS共享盘的方式参考`ubuntu-tf+nfs-direct-example.yaml`。
 
 > **_WARNING:_** 严禁修改、删除他人的工作目录！
 
 #### 申请 PVC
 
-使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过PVC获得持久化存储参考`ubuntu-tf-nfs-pvc-example.yaml`。
+使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过 PVC 获得持久化存储参考`pvc-example.yaml`。申请 PVC 并在 POD 中挂载 PVC 参考`ubuntu-tf+pvc-example.yaml` （如果已经单独申请过 PVC，可以删去yaml文件开头申请 PVC 的部分）。
 
 #### 挂载本地磁盘
 
-每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考`ubuntu-tf-local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf-local-disk+nfs-pvc-example`。
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考`ubuntu-tf+local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf+local-disk+pvc-example`。
