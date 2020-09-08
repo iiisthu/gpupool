@@ -34,7 +34,19 @@ spec:
             value: "0"
           - name: ORION_CROSS_NODE
             value: "1"
-          - name : ORION_GROUP_ID
+          - name: ORION_GROUP_ID
             valueFrom:
               fieldRef:
                 fieldPath: metadata.uid
+        volumeMounts:
+        - name: my-local-disk-1
+          mountPath: /mnt/data1
+        - name: my-local-disk-2
+          mountPath: /mnt/data2
+      volumes:
+        - name: my-local-disk-1
+          hostPath:
+            path: /data  # 两块物理盘，/data 大小3.7T，/data2 大小3.0T
+        - name: my-local-disk-2
+          hostPath:
+            path: /data2

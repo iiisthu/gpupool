@@ -134,58 +134,22 @@ kubectl delete deployment my-first-ubuntu-tf
 
 TDDO: 完善持久化存储的内容
 
-<!-- ### 持久化存储
+### 持久化存储
 
-POD 的本地文件是临时的，在每次重启（手动或失败重启）后都会恢复到最初的镜像状态。为了保持在 POD 中做的状态变化（例如创建了数据文件、日志文件等），需要向集群申请额外的存储资源 PVC。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。
+POD 的本地文件是临时的，在每次重启（手动或失败重启）后都会恢复到最初的镜像状态。为了保持在 POD 中做的状态变化（例如创建了数据文件、日志文件等），需要向集群申请持久化存储资源。目前提供两种持久化存储方案：直接挂载NFS的共享盘和申请[PVC](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)，两种方式挂载成功后都可以通过`/share`访问持久化存储卷。
 
-使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。在`myconfig.yaml`中加入以下项：
+> **_NOTE:_** 提供持久化存储服务的硬盘并不保证和 POD 处于同一台物理机上，因此如果有大量的文件IO，建议先将数据拷贝到 POD 同一台物理机的磁盘，再从本地磁盘读写。
 
-```yaml
-# myconfig.yaml
-apiVersion: apps/v1
-kind: PersistentVolumeClaim
-metadata:
-  name: myclaim
-spec:
-  accessModes:
-    - ReadWriteMany
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 80Gi
-  storageClassName: slow
-  selector:
-    matchLabels:
-      release: "stable"
-    matchExpressions:
-      - {key: environment, operator: In, values: [dev]}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-first-ubuntu-cuda
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ubuntu-cuda
-  template:
-    metadata:
-      labels:
-        app: ubuntu-cuda
-    spec:
-      containers:
-      - name: ubuntu-cuda
-        image: 172.16.112.173:30006/library/ubuntu-cuda:18.04_10
-        command: ["/bin/bash", "-ce", "tail -f /dev/null"]
-        ports:
-          - containerPort: 80
-        volumeMounts:  # 指定挂载点
-        - mountPath: "/var/www/html"
-          name: mypd  # label，用作和PVC绑定
-      volumes:
-      - name: mypd  # 申请的PVC
-        persistentVolumeClaim:
-          claimName: myclaim
-``` -->
+#### 直接挂载 NFS 共享盘
 
+集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录，请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`）。通过直接挂载NFS共享盘的方式参考`ubuntu-tf-nfs-direct-example.yaml`。
+
+> **_WARNING:_** 严禁修改、删除他人的工作目录！
+
+#### 申请 PVC
+
+使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过PVC获得持久化存储参考`ubuntu-tf-nfs-pvc-example.yaml`。
+
+#### 挂载本地磁盘
+
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考`ubuntu-tf-local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf-local-disk+nfs-pvc-example`。

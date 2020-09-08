@@ -34,7 +34,15 @@ spec:
             value: "0"
           - name: ORION_CROSS_NODE
             value: "1"
-          - name : ORION_GROUP_ID
+          - name: ORION_GROUP_ID
             valueFrom:
               fieldRef:
                 fieldPath: metadata.uid
+        volumeMounts:
+        - name: share-nfs
+          mountPath: /share
+      volumes:
+        - name: share-nfs
+          nfs:
+            server: 172.16.112.172
+            path: /data/nfs_data/share

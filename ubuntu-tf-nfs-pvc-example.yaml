@@ -1,3 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: share-pvc-demo
+spec:
+  storageClassName: managed-nfs-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # 申请的资源大小
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -38,3 +50,11 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.uid
+        volumeMounts:
+        - name: share-pvc
+          mountPath: /share
+
+      volumes:
+        - name: share-pvc
+          persistentVolumeClaim:
+            claimName: share-pvc-demo
