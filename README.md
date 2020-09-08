@@ -88,7 +88,7 @@ image: 172.16.112.173:30006/library/ubuntu-pytorch:1.5.0
 
 ### 操作容器
 
-以创建一个运行着支持 CUDA 和 Tensorflow 的 Ubuntu 18.04 容器为例。首先创建yaml配置文件（假设命名为myconfig.yaml，参考ubuntu-tf-example.yaml），之后根据配置部署：
+以创建一个运行着支持 CUDA 和 Tensorflow 的 Ubuntu 18.04 容器为例。首先创建yaml配置文件（假设命名为myconfig.yaml，参考`ubuntu-tf-example.yaml`），之后根据配置部署：
 
 ```bash
 kubectl apply -f myconfig.yaml
@@ -131,8 +131,6 @@ True
 ```bash
 kubectl delete deployment my-first-ubuntu-tf
 ```
-
-TDDO: 完善持久化存储的内容
 
 ### 持久化存储
 
