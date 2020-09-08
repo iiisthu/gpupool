@@ -121,7 +121,7 @@ $ python -c "import torch; print(torch.cuda.is_available())"
 True
 
 # tensorflow
-$ python -c "import tensoflow as tf; print(tf.test.is_gpu_available())"
+$ python -c "import tensorflow as tf; print(tf.test.is_gpu_available())"
 ...
 True
 ```
