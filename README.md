@@ -174,7 +174,11 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录。这个目录的主要目的是共享一些公共的数据集（例如某些benchmark训练数据之类的），方便大家共同使用。这一存储的优点是可靠性高（后台是华为的专用存储阵列，带RAID），缺点是性能比较低，因此要尽量避免直接在上边进行大规模的数据读写操作。
 
-把数据集放到共享目录下的方法：请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`），公开数据集请放入`share/datasets/`下，并附带说明文件README指出数据源及具体描述。挂载NFS共享盘的方式参考`ubuntu-tf-nfs-direct-example.yaml`。
+把数据集放到共享目录下的方法：请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`），公开数据集请放入`share/datasets/`下，并附带说明文件README指出数据源及具体描述。挂载NFS共享盘的方式：
+
+```bash
+kubectl apply -f ubuntu-tf-nfs-direct-example.yaml
+```
 
 > **_NOTE:_** 使用时尽量把数据拷贝到下边的本地磁盘再使用！
 
@@ -186,7 +190,16 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 如果你需要一个自己的共享文件目录，不希望被别人看见、或者能被别人删除的，例如可以存自己的代码啊，程序运行的结果等内容。这个盘的后端跟上述共享目录是同一套存储，也具有比较好的可靠性，但是同样的，不要指望高性能，因此也不要在上边分析大量的数据。
 
-使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过 PVC 获得持久化存储参考`pvc-example.yaml`。在 POD 中挂载 PVC 参考`ubuntu-tf+pvc-example.yaml` 。
+使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过 PVC 获得持久化存储：
+
+```bash
+kubectl apply -f nfs-pvc-example.yaml
+```
+在 POD 中挂载 PVC：
+
+```bash
+kubectl apply -f ubuntu-tf+pvc-example.yaml
+```
 
 #### 挂载本地缓存SSD
 
@@ -197,13 +210,19 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 * 用缓存的数据来跑程序，结果也写到这个缓存中；
 * 关闭POD前，把结果拷贝到PVC中去（用rsync命令）。
 
-每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考`ubuntu-tf+local-disk-example.yaml`。需要同时申请持久化存储并挂载本地磁盘，可参考`ubuntu-tf+local-disk+pvc-example`。在这两个例子中，两个SSD盘分别挂在`/mnt/data1`和`/mnt/data2`两个目录下。
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考
+
+```bash
+kubectl apply -f ubuntu-tf+local-disk-example.yaml
+```
+
+在这个模板中，两个SSD盘分别挂在`/mnt/data1`和`/mnt/data2`两个目录下。
 
 > **_NOTE:_** 想要同时挂载多个卷（如同时挂载SSD和NFS共享盘），请参考各个例子中声明volume的部分，组合起来即可。
 
 #### 实测POD内存储性能
 
-测试工具：fio，使用了https://github.com/axboe/fio/tree/master/examples 上的测试配置参数
+用[fio](https://github.com/axboe/fio/tree/master/examples)测试了本地SSD盘的速度
 
 |目录|参数|性能|
 |---|---|---|
