@@ -27,7 +27,7 @@ spec:
             virtaitech.com/gpu: 1  # 最大GPU数目
           requests:
             cpu: 10 # 最小需要的CPU数目 （如果目前资源不够，就放弃启动）
-            memory: 10Gi # 最小需要申请的内存的数目（如果目前资源不够，就放弃启动）
+            memory: 40Gi # 最小需要申请的内存的数目（如果目前资源不够，就放弃启动）
             virtaitech.com/gpu: 1  # 最小需要的GPU数目
         env:
           - name : ORION_GMEM

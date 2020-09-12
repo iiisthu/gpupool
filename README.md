@@ -86,6 +86,27 @@ image: 172.16.112.173:30006/library/ubuntu-tensorflow:1.14.1
 image: 172.16.112.173:30006/library/ubuntu-pytorch:1.5.0
 ```
 
+### 资源配额
+
+默认每个用户的命名空间下申请的每个容器的最大资源占用为10个GPU，10G的内存。当需要更大的计算资源时可以应用新的资源配额配置（参考`quota.yaml`）。首先删除旧的资源配额配置：
+
+```bash
+# 查看当前所有的资源配额配置
+$ kubectl get resourcequotas
+NAME                          CREATED AT
+compute-resources-zhangsan1   2020-08-27T08:44:25Z
+
+# 删除已有资源配额配置
+$ kubectl delete resourcequotas compute-resources-zhangsan1
+resourcequota "compute-resources-zhangsan1" deleted
+
+# 应用新的配置
+$ kubectl apply -f quota.yaml
+deployment.apps/my-first-ubuntu-tf created
+```
+
+目前给出的所有的yaml模板均使用`Mem 20G + 10 CPU`的配置，因此如果 POD 不能成功创建，需要先应用新的配额配置。
+
 ### 操作容器
 
 以创建一个运行着支持 CUDA 和 Tensorflow 的 Ubuntu 18.04 容器为例。首先创建yaml配置文件（假设命名为myconfig.yaml，参考`ubuntu-tf-example.yaml`），之后根据配置部署：
