@@ -113,7 +113,7 @@ resourcequota "compute-resources-zhangsan1" deleted
 
 # 应用新的配置
 $ kubectl apply -f quota.yaml
-deployment.apps/my-first-ubuntu-tf created
+resourcequota/mem-cpu-quota created
 ```
 
 目前给出的所有的yaml模板均使用`Mem 20G + 10 CPU`的配置，因此如果 POD 不能成功创建，需要先应用新的配额配置。
