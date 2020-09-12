@@ -158,7 +158,7 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 #### 挂载本地缓存SSD
 
-每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。实测性能请见下边的测试（目前data2性能似乎有些问题，会尽快修复）。
+每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。实测性能请见下边的测试，两块盘的每秒顺序读写分别超过了2GB和3GB。
 本地磁盘只做临时缓存用，并不保证容错，每次重启POD的时候，可能会被清空。建议和持久盘配合使用，推荐的用法是：
 
 * 启动POD的时候，把需要的数据从上边的share磁盘或者自己的PVC拷贝到这个缓存 （可以用rsync命令）
@@ -169,17 +169,13 @@ POD 的本地文件是临时的，在每次重启（手动或失败重启）后�
 
 #### 实测POD内存储性能
 
-测试命令：
-```bash
-# Under directory to test
-$ time dd if=/dev/zero of=test.dbf bs=8k count=300000 oflag=direct
-```
+测试工具：fio，使用了https://github.com/axboe/fio/tree/master/examples 上的测试配置参数
 
-|目录|方式|性能|
+|目录|参数|性能|
 |---|---|---|
 |`/share`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 56.7821 s, 43.3 MB/s|
 |`/share`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 33.293 s, 73.8 MB/s|
-|`/mnt/data1`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 4.47296 s, 549 MB/s|
-|`/mnt/data1`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 3.09478 s, 794 MB/s|
-|`/mnt/data2`|写入|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 11.2952 s, 218 MB/s|
-|`/mnt/data2`|读取|2457600000 bytes (2.5 GB, 2.3 GiB) copied, 45.7348 s, 53.7 MB/s|
+|`/mnt/data1`|fio-seq-write.fio|bw=2825MiB/s (2963MB/s), 2825MiB/s-2825MiB/s (2963MB/s-2963MB/s)|
+|`/mnt/data1`|fio-seq-read.fio|bw=2147MiB/s (2252MB/s), 2147MiB/s-2147MiB/s (2252MB/s-2252MB/s)|
+|`/mnt/data2`|fio-seq-write.fio|bw=3130MiB/s (3282MB/s), 3130MiB/s-3130MiB/s (3282MB/s-3282MB/s)|
+|`/mnt/data2`|fio-seq-read.fio|bw=3082MiB/s (3232MB/s), 3082MiB/s-3082MiB/s (3232MB/s-3232MB/s)|
