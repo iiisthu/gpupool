@@ -45,10 +45,10 @@ spec:
               fieldRef:
                 fieldPath: metadata.uid
         volumeMounts:
-        - name: share-nfs
-          mountPath: /share
+        - name: share-nfs  # 和下面的名字对应
+          mountPath: /share # POD文件系统中的挂载点
       volumes:
-        - name: share-nfs
+        - name: share-nfs  # 和上面的名字对应
           nfs:
             server: 172.16.112.172
             path: /data/nfs_data/share

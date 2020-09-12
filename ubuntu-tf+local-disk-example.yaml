@@ -45,14 +45,14 @@ spec:
               fieldRef:
                 fieldPath: metadata.uid
         volumeMounts:
-        - name: my-local-disk-1
-          mountPath: /mnt/data1
-        - name: my-local-disk-2
-          mountPath: /mnt/data2
+        - name: my-local-disk-1  # 与下面volumes的名字对应
+          mountPath: /mnt/data1  # 本地的挂载点
+        - name: my-local-disk-2  # 与下面volumes的名字对应
+          mountPath: /mnt/data2  # 本地的挂载点
       volumes:
         - name: my-local-disk-1
           hostPath:
-            path: /data  # 两块物理盘，/data 大小3.7T，/data2 大小3.0T
+            path: /data  # 大小3.7T
         - name: my-local-disk-2
           hostPath:
-            path: /data2
+            path: /data2 # 大小3.0T
