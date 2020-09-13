@@ -212,7 +212,7 @@ kubectl apply -f ubuntu-tf+pvc-example.yaml
 * 用缓存的数据来跑程序，结果也写到这个缓存中；
 * 关闭POD前，把结果拷贝到PVC中去（用rsync命令）。
 
-每台物理机本地有两块SSD可供挂载，读写速度会比 NFS 共享盘和 PVC 高很多。不过本地磁盘只做临时缓存用，并不保证容错，可能会被清空，因此建议和持久盘配合使用。挂载本地磁盘参考
+挂载本地磁盘参考
 
 ```bash
 kubectl apply -f ubuntu-tf+local-disk-example.yaml
