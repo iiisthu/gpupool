@@ -9,6 +9,8 @@
     - [资源配额](#资源配额)
     - [操作容器](#操作容器)
     - [数据、程序和结果的持久化存储](#数据程序和结果的持久化存储)
+- [FAQ](#FAQ)
+
 ## 环境配置
 
 ### 配置VPN连接
@@ -234,3 +236,19 @@ kubectl apply -f ubuntu-tf+local-disk-example.yaml
 |`/mnt/data1`|fio-seq-read.fio|bw=2147MiB/s (2252MB/s), 2147MiB/s-2147MiB/s (2252MB/s-2252MB/s)|
 |`/mnt/data2`|fio-seq-write.fio|bw=3130MiB/s (3282MB/s), 3130MiB/s-3130MiB/s (3282MB/s-3282MB/s)|
 |`/mnt/data2`|fio-seq-read.fio|bw=3082MiB/s (3232MB/s), 3082MiB/s-3082MiB/s (3232MB/s-3232MB/s)|
+
+## FAQ
+
+这里列举一些常见问题供大家参考。
+
+### Apply后显示deployment已创建，但是没有Pods
+
+POD 超过默认的资源配额或者集群资源不足。首先参考[资源配额](#资源配额)修改配额配置（可以通过`kubectl describe resourcequota xxx`查看具体的配置）。
+
+### 删除 Pod 后，`kubectl get pods`又出现新的Pod
+
+应该删除`deployment`资源。我们通过申请`deployment`资源会创建 POD，同时监控是否有 POD 挂掉，如果挂掉了会再向集群申请资源，始终维持可用的 POD 个数保持在配置文件中`replicas`指定的备份数目。
+
+```bash
+kubectl delete deployment my-first-ubuntu-tf
+```

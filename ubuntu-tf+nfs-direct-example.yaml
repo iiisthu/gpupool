@@ -22,12 +22,12 @@ spec:
         args: ["while true; do sleep 30; done;"]
         resources:
           limits:
-            cpu: 4 # 最大CPU 数目：4个cpu内核
-            memory: 16Gi # 最大内存数目: 40GB
+            cpu: 4 # 最大CPU
+            memory: 10Gi # 最大内存数目
             virtaitech.com/gpu: 1  # 最大GPU数目
           requests:
             cpu: 4 # 最小需要的CPU数目 （如果目前资源不够，就放弃启动）
-            memory: 16Gi # 最小需要申请的内存的数目（如果目前资源不够，就放弃启动）
+            memory: 8Gi # 最小需要申请的内存的数目（如果目前资源不够，就放弃启动）
             virtaitech.com/gpu: 1  # 最小需要的GPU数目
         env:
           - name : ORION_GMEM
