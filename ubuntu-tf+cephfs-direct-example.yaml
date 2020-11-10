@@ -46,8 +46,8 @@ spec:
                 fieldPath: metadata.uid
         volumeMounts:
         - name: share-cephfs  # 和下面的名字对应
-          mountPath: /share # POD文件系统中的挂载点
+          mountPath: /sharecephfs # POD文件系统中的挂载点
       volumes:
         - name: share-cephfs  # 和上面的名字对应
           persistentVolumeClaim:
-            claimName: my-pvc-demo
+            claimName: my-cephfs-pvc
