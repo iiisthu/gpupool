@@ -5,7 +5,7 @@ metadata:
 spec:
   storageClassName: managed-nfs-storage
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi  # 申请的资源大小
