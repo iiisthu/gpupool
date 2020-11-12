@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-  name: my-first-ubuntu-tf
+  name: my-nfs-cephfs
 spec:
   replicas: 1
   selector:
@@ -45,9 +45,14 @@ spec:
               fieldRef:
                 fieldPath: metadata.uid
         volumeMounts:
+        - name: share-nfs  # 和下面的名字对应
+          mountPath: /sharenfs # POD文件系统中的挂载点
         - name: share-cephfs  # 和下面的名字对应
           mountPath: /sharecephfs # POD文件系统中的挂载点
       volumes:
+        - name: share-nfs  # 和上面的名字对应        
+          persistentVolumeClaim:
+            claimName: my-nfs-pvc
         - name: share-cephfs  # 和上面的名字对应
           persistentVolumeClaim:
             claimName: my-cephfs-pvc
