@@ -64,7 +64,10 @@ kubectl version
 最后将`config`文件放在`~/.kube`下，并通过获取集群状态检查`kubectl`是否被正确配置：
 
 ```bash
-kubectl cluster-info
+$ kubectl cluster-info
+Kubernetes master is running at https://172.16.112.220:6443
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 ```
 
 ## 集群使用
