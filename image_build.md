@@ -22,6 +22,6 @@
 
 制作镜像的方式有基于 Dockerfile 和 `docker commit`命令两种形式。我们这里推荐基于 Dockerfile 方式，`docker commit`方式请参考[官方文档](https://docs.docker.com/engine/reference/commandline/commit/)。
 
-> **_NOTE:_** 在[这里]()可以找到我们在这一节所使用的例子。
+> **_NOTE:_** 在[这里](https://github.com/iiisthu/gpupool/tree/master/examples/build_example)可以找到我们在这一节所使用的例子。
 
 ## 从自定义镜像创建 Pod
