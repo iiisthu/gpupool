@@ -32,6 +32,8 @@ image: harbor.iiis.co/library/ubuntu-tensorflow:1.14.1
 image: harbor.iiis.co/library/ubuntu-pytorch:1.5.0
 ```
 
+> **_NOTE:_** 实际我们可能需要进行一些自定义的环境配置，我们支持用户将自己的镜像上传到 Harbor 中，这部分可以参考我们提供的[自定义镜像的例子](https://github.com/iiisthu/gpupool/blob/master/image_build.md)。
+
 ## 操作容器
 
 以创建一个运行着支持 CUDA 和 Tensorflow 的 Ubuntu 18.04 容器为例。首先创建yaml配置文件（假设命名为myconfig.yaml，参考`ubuntu-tf-example.yaml`），之后根据配置部署：
@@ -45,7 +47,7 @@ kubectl apply -f myconfig.yaml
 ```bash
 $ kubectl get pods
 NAME                                    READY   STATUS             RESTARTS   AGE
-my-first-ubuntu-tf-75b9d4ff7d-grk42   1/1     Running            0          19s
+my-first-ubuntu-tf-75b9d4ff7d-grk42     1/1     Running            0          19s
 ```
 
 当 POD 状态为运行中时，可以连接到该Pod：
@@ -80,29 +82,37 @@ kubectl delete deployment my-first-ubuntu-tf
 
 ## 数据、程序和结果的持久化存储
 
-POD 的本地文件是临时的，在每次重启（手动或失败重启）后都会恢复到最初的镜像状态。为了保持在 POD 中做的状态变化（例如创建了数据文件、日志文件等），需要向集群申请持久化存储资源。目前提供两种持久化存储方案：直接挂载NFS的共享盘和申请[PVC](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)，前者用于跨用户共享，后者为个人可见。两者均为网络存储，因此效率有限。我们在每台物理机上配置了两块3T的SSD硬盘作为本地缓存用，建议两者配合使用（见[挂载本地缓存SSD](#挂载本地缓存SSD)）。
+POD 的本地文件是临时的，在每次重启（手动或失败重启）后都会恢复到最初的镜像状态。为了保持在 POD 中做的状态变化（例如创建了数据文件、日志文件等），需要向集群申请持久化存储资源。
+
+目前提供两种持久化存储方案：直接挂载 NFS 的共享盘和申请 NFS 或者 Cephfs 的 [PVC](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)。NFS共享盘用于跨用户共享，PVC 为个人可见。NFS PVC 性能低于 Cephfs，但是具有高可靠性（后台是华为的专用存储阵列，带RAID），因此建议 Cephfs 用作非长期使用数据的缓存，长期需要保存的数据使用 NFS PVC。
+
+> **_WARNING:_** 目前 Cephfs PVC 存在写速度较低的问题，因此目前建议使用本地SSD作为缓存，我们会在后续解决这一问题。
+
+> **_NOTE:_** 直接挂载 NFS 共享盘没有高可靠性保障（后面没有RAID)。
+
+我们还在每台物理机上配置了两块3T的SSD硬盘作为本地缓存用（其中一块的2T空间已分配给 Cephfs），它的缺点是可靠性更差（POD 死掉以后再启动可能在另一个 node 上，数据便会丢失），因此建议配合 PVC 使用（见[挂载本地缓存SSD](#挂载本地缓存SSD)）。
 
 > **_NOTE:_** 提供持久化存储服务的硬盘并不保证和 POD 处于同一台物理机上，因此如果有大量的文件IO，建议先将数据拷贝到 POD 同一台物理机的磁盘，再从本地磁盘读写。
 
 ### 直接挂载 NFS 共享盘
 
-集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录。这个目录的主要目的是共享一些公共的数据集（例如某些benchmark训练数据之类的），方便大家共同使用。这一存储的优点是可靠性高（后台是华为的专用存储阵列，带RAID），缺点是性能比较低，因此要尽量避免直接在上边进行大规模的数据读写操作。
+集群 NFS 向所有用户提供了持久化的共享存储空间，可以理解为一个远程的目录。这个目录的主要目的是共享一些公共的数据集（例如某些benchmark训练数据之类的），方便大家共同使用。这一存储的缺点是性能比较低，因此要尽量避免直接在上边进行大规模的数据读写操作。
 
-把数据集放到共享目录下的方法：请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan1`则建立`share/zhangsan1`），公开数据集请放入`sharenfs/datasets/`下，并附带说明文件README指出数据源及具体描述。挂载NFS共享盘的方式：
+把数据集放到共享目录下的方法：请每位用户自行以自己分配到的集群命名空间为名建立文件夹（例如命名空间为`zhangsan`则建立`share/zhangsan`），公开数据集请放入`sharenfs/datasets/`下，并附带说明文件README指出数据源及具体描述。挂载NFS共享盘的方式：
 
 ```bash
-kubectl apply -f ubuntu-tf-nfs-direct-example.yaml
+kubectl apply -f ubuntu-tf+nfs-direct-example.yaml
 ```
-
-> **_NOTE:_** 使用时尽量把数据拷贝到下边的本地磁盘再使用！
-
-如果西安集群访问Internet非常慢，数据集下载不下来等情况，请联系尹伟老师，他会通过其他途径把数据集放到这个共享盘上。
 
 > **_WARNING:_** 严禁任意修改、删除他人的工作目录！
 
-### 申请NFS上的独立存储盘PVC
+> **_NOTE:_** 如果需要密集的读写，建议先拷贝到本地磁盘后再使用。
 
-如果你需要一个自己的共享文件目录，不希望被别人看见、或者能被别人删除的，例如可以存自己的代码啊，程序运行的结果等内容。这个盘的后端跟上述共享目录是同一套存储，也具有比较好的可靠性，但是同样的，不要指望高性能，因此也不要在上边分析大量的数据。
+> **_NOTE:_** 如果西安集群访问Internet非常慢，数据集下载不下来等情况，请联系尹伟老师，他会通过其他途径把数据集放到这个共享盘上。
+
+### 申请独立存储盘PVC
+
+如果你需要一个自己的共享文件目录，不希望被别人看见、或者能被别人删除的，例如可以存自己的代码啊，程序运行的结果等内容，可以申请 PVC。目前我们提供两种 PVC：NFS PVC 和 Cephfs PVC。前者具有高可靠性，但是性能更低，后者性能更高，但是没有后端的冗余存储阵列以保证可靠性。
 
 使用 PVC 和 POD 相似，都向集群申请临时资源，不同的是 PVC 申请的是存储资源，POD 申请的是计算资源。PVC 和 POD 的生命周期是独立的，重启 POD 后 PVC 中的数据并不会消失。通过 PVC 获得持久化存储：
 

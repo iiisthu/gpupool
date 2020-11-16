@@ -55,4 +55,4 @@ spec:
             path: /data  # 大小3.7T
         - name: my-local-disk-2
           hostPath:
-            path: /data2 # 大小3.0T
+            path: /data2 # 大小1.0T
