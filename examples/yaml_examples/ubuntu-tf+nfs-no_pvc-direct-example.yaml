@@ -50,5 +50,5 @@ spec:
       volumes:
         - name: share-nfs  # 和上面的名字对应
           nfs:
-            server: 172.16.112.175  #使用IP地址挂接nfs，可以实现多用户同时访问共享数据，但没有安全隔离功能，不提供数据可靠性保证（存储后端没有Raid）
+            server: 172.16.112.175  #使用IP地址挂接nfs，可以实现多用户访问共享数据，但没有隐私性和可靠性保证（存储后端没有Raid）
             path: /nfs_data/share
