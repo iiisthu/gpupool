@@ -15,7 +15,7 @@ alias kubectl="kubectl -n zhangsan"  # zhangsan为分配的namespace
 
 ## 镜像列表
 
-Docker 镜像仓库位置：`172.16.112.220:30006/library/`。以下是提供的支持GPU的镜像列表，其他镜像可以从 Docker Hub 拉取。
+Docker 镜像仓库位置：`harbor.iiis.co/library/`。以下是提供的支持GPU的镜像列表，其他镜像可以从 Docker Hub 拉取。
 
 |镜像|可用Tag|GPU支持|备注|
 |---|----|------|---|
@@ -24,12 +24,12 @@ Docker 镜像仓库位置：`172.16.112.220:30006/library/`。以下是提供的
 |orion-client-2.4.2|cu10.0_cudnn7_ubuntu18.04-base, cu10.1_cudnn7_ubuntu18.04-base, cu10.2_cudnn7_ubuntu18.04-base|是|仅包含虚拟GPU的镜像，需要自行安装Tensorflow等库，Tag区别仅是CUDA版本|
 |cuda|10.0-cudnn7-devel-ubuntu18.04, 10.1-cudnn7-devel-ubuntu18.04, 10.2-cudnn7-devel-ubuntu18.04|是|仅包含CUDA支持，只能访问物理机的GPU，Tag区别仅是CUDA版本|
 
-在配置文件中通过`172.16.112.220:30006/library/<镜像>:<Tag>`从指定镜像版本创建 POD。为了方便，这里列出yaml中镜像一行的常用选择:
+在配置文件中通过`harbor.iiis.co/library/<镜像>:<Tag>`从指定镜像版本创建 POD。为了方便，这里列出yaml中镜像一行的常用选择:
 
 ```yaml
-image: 172.16.112.220:30006/library/ubuntu-tensorflow:2.3.0
-image: 172.16.112.220:30006/library/ubuntu-tensorflow:1.14.1
-image: 172.16.112.220:30006/library/ubuntu-pytorch:1.5.0
+image: harbor.iiis.co/library/ubuntu-tensorflow:2.3.0
+image: harbor.iiis.co/library/ubuntu-tensorflow:1.14.1
+image: harbor.iiis.co/library/ubuntu-pytorch:1.5.0
 ```
 
 ## 操作容器
