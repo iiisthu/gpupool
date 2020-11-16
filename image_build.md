@@ -12,6 +12,7 @@
 
 ```json
 {
+  ...
   "insecure-registries": [
     "harbor.iiis.co:30006"
   ]
@@ -109,11 +110,27 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 ![](assets/images/harbor_create_project.jpg)
 
-假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.iiis.co:30006/zhangsan/`下：
+假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.iiis.co:30006/zhangsan/`下，首先 tag 我们做好的镜像：
 
 ```bash
 docker tag sample:v0 harbor.iiis.co:30006/zhangsan/sample:v0
+```
+
+之后将镜像 push 到 Harbor 中，我们需要先在 docker 中登录我们在 Harbor上的账号：
+
+```txt
+$ docker logout harbor.iiis.co:30006
+Removing login credentials for harbor.iiis.co:30006
+$ docker login harbor.iiis.co:30006
+Username: zhangsan
+Password:
+Login Succeeded
+```
+
+最后将镜像推送到 Harbor 中：
+
+```bash
 docker push harbor.iiis.co:30006/zhangsan/sample:v0
 ```
 
-之后创建 Pod 流程和标准镜像一样。
+创建好镜像后，拉起 Pod 流程和标准镜像一样。
