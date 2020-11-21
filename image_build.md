@@ -8,7 +8,7 @@
 
 ![Mac docker config](assets/images/mac_docker_config.jpg)
 
-若未使用 Docker Desktop，则在`/etc/docker/deamon.json`中添加（若该文件不存在则创建）：
+若未使用 Docker Desktop，则在`/etc/docker/daemon.json`中添加（若该文件不存在则创建）：
 
 ```json
 {
