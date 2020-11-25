@@ -7,4 +7,5 @@
 - [环境配置](https://github.com/iiisthu/gpupool/blob/master/environment.md)
 - [集群使用](https://github.com/iiisthu/gpupool/blob/master/usage.md)
 - [自建镜像](https://github.com/iiisthu/gpupool/blob/master/image_build.md)
+- [使用 VS Code 调试](https://github.com/iiisthu/gpupool/blob/master/connect_with_vscode.md)
 - [FAQ](https://github.com/iiisthu/gpupool/blob/master/faq.md)
