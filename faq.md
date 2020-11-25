@@ -34,3 +34,9 @@ resourcequota "compute-resources-zhangsan1" deleted
 $ kubectl apply -f quota.yaml
 resourcequota/mem-cpu-quota created
 ```
+
+## 基于 orion-client-2.4.2 打的镜像，如何安装 Pytorch 或者 Tensorflow
+
+具体用`pip`安装的指令见[这里](https://pypi.virtaitech.com/)。
+
+> **_NOTE:_** CUDA 版本选择10.1。
