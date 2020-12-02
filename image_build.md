@@ -14,7 +14,7 @@
 {
   ...
   "insecure-registries": [
-    "harbor.iiis.co:30006"
+    "harbor.iiis.co"
   ]
 }
 ```
@@ -72,11 +72,11 @@ build
 
 ### 编写 Dockerfile 制作镜像
 
-我们从`harbor.iiis.co:30006/library/`下的镜像出发，安装`requirements.txt`中的依赖，并安装数据。我们这里不赘述[ Dockerfile 的语法](https://docs.docker.com/engine/reference/builder/)。实例的 Dockerfile 如下：
+我们从`harbor.iiis.co/library/`下的镜像出发，安装`requirements.txt`中的依赖，并安装数据。我们这里不赘述[ Dockerfile 的语法](https://docs.docker.com/engine/reference/builder/)。实例的 Dockerfile 如下：
 
 ```docker
 # Dockerfile
-FROM harbor.iiis.co:30006/library/ubuntu-pytorch:1.5.0
+FROM harbor.iiis.co/library/ubuntu-pytorch:1.5.0
 COPY . build
 RUN pip install -r build/requirements.txt
 RUN cd build/samplemod; pip install .
@@ -111,18 +111,18 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 ![](assets/images/harbor_create_project.jpg)
 
-假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.iiis.co:30006/zhangsan/`下，首先 tag 我们做好的镜像：
+假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.iiis.co/zhangsan/`下，首先 tag 我们做好的镜像：
 
 ```bash
-docker tag sample:v0 harbor.iiis.co:30006/zhangsan/sample:v0
+docker tag sample:v0 harbor.iiis.co/zhangsan/sample:v0
 ```
 
 之后将镜像 push 到 Harbor 中，我们需要先在 docker 中登录我们在 Harbor上的账号：
 
 ```txt
-$ docker logout harbor.iiis.co:30006
-Removing login credentials for harbor.iiis.co:30006
-$ docker login harbor.iiis.co:30006
+$ docker logout harbor.iiis.co
+Removing login credentials for harbor.iiis.co
+$ docker login harbor.iiis.co
 Username: zhangsan
 Password:
 Login Succeeded
@@ -131,7 +131,7 @@ Login Succeeded
 最后将镜像推送到 Harbor 中：
 
 ```bash
-docker push harbor.iiis.co:30006/zhangsan/sample:v0
+docker push harbor.iiis.co/zhangsan/sample:v0
 ```
 
 创建好镜像后，拉起 Pod 流程和标准镜像一样。
