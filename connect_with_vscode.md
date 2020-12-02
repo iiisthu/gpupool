@@ -2,9 +2,13 @@
 
 使用 [VS Code](https://code.visualstudio.com/) 可以远程 debug 集群中创建的 POD。这里我们给出一个简单的教程，更多的信息请自行查阅 [Kubernetes 文档](https://kubernetes.io/zh/docs/concepts/services-networking/service/)与 [VS Code 文档](https://code.visualstudio.com/docs/azure/kubernetes)。
 
-首先我们需要在 VS Code 中安装`Kubernetes`插件：
+首先我们需要在 VS Code 中安装`Kubernetes`插件、`Docker`插件、`Remote Container`插件：
 
 ![](assets/images/vsc_k8s_plugin.jpg)
+
+![](assets/images/vsc_docker_plugin.jpg)
+
+![](assets/images/vsc_remote_connector_plugin.jpg)
 
 使用`ctrl + shift + P`（Mac 下`command + shift + P`）选择`Kubernetes: Use Namespace`
 
