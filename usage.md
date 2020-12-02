@@ -1,6 +1,6 @@
 # 集群使用
 
-这里我们介绍 GPU 集群的基本使用，在使用之前需要正确[配置集群环境](https://github.com/iiisthu/gpupool/blob/master/environment.md)。
+这里我们介绍 GPU 集群的基本使用，在使用之前需要正确[配置集群环境](environment.md)。
 
 > **_NOTE:_** 集群的连接均采用命令行工具`kubectl`，当使用遇见问题时建议阅读详细的 `kubectl` 教程 [kubectl book](https://kubectl.docs.kubernetes.io/)。
 
@@ -15,7 +15,7 @@ alias kubectl="kubectl -n zhangsan"  # zhangsan为分配的namespace
 
 ## 镜像列表
 
-Docker 镜像仓库位置：`harbor.iiis.co/library/`。以下是提供的支持GPU的镜像列表，其他镜像可以从 Docker Hub 拉取。
+默认 Docker 镜像仓库位置：`harbor.iiis.co/library/`。以下是提供的支持GPU的镜像列表：
 
 |镜像|可用Tag|GPU支持|备注|
 |---|----|------|---|
@@ -31,7 +31,7 @@ image: harbor.iiis.co/library/ubuntu-tensorflow:1.14.1
 image: harbor.iiis.co/library/ubuntu-pytorch:1.5.0
 ```
 
-> **_NOTE:_** 实际我们可能需要进行一些自定义的环境配置，我们支持用户将自己的镜像上传到 Harbor 中，这部分可以参考我们提供的[自定义镜像的例子](https://github.com/iiisthu/gpupool/blob/master/image_build.md)。
+> **_NOTE:_** 实际我们可能需要进行一些自定义的环境配置，我们支持用户将自己的镜像上传到 Harbor 中，这部分可以参考我们提供的[自定义镜像的例子](image_build.md)。
 
 ## 操作容器
 
