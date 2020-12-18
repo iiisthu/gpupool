@@ -40,3 +40,30 @@ resourcequota/mem-cpu-quota created
 具体用`pip`安装的指令见[这里](https://pypi.virtaitech.com/)。
 
 > **_NOTE:_** CUDA 版本选择10.1。
+
+## 可以连接VPN，但是无法访问 harbor.iiis.co
+
+部分路由器可能会禁止指向本地IP的域名，若能连接 VPN，可以尝试直接访问IP的方式，跳过域名查询。首先查询harbor.iiis.co对应的IP：
+
+```bash
+$ dig harbor.iiis.co
+; <<>> DiG 9.10.6 <<>> harbor.iiis.co
+
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 40516
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 0
+
+;; QUESTION SECTION:
+;harbor.iiis.co.			IN	A
+
+;; ANSWER SECTION:
+harbor.iiis.co.		1800	IN	A	172.16.112.220
+
+;; Query time: 331 msec
+;; SERVER: 221.179.155.177#53(221.179.155.177)
+;; WHEN: Fri Dec 18 22:54:11 CST 2020
+;; MSG SIZE  rcvd: 48
+```
+
+因此我们知道IP为 172.16.112.220。因此可以尝试访问 172.16.112.220:31388。
