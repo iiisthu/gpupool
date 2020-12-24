@@ -17,6 +17,7 @@ spec:
       hostIPC: true
       containers:
       - name: orion-client-hvd
+        imagePullPolicy: Always
         image: harbor.iiis.co/library/ubuntu-tensorflow:2.3.0  # 可自行更改镜像和版本
         command: ["bash", "-c", "--"]
         args: ["while true; do sleep 30; done;"]
