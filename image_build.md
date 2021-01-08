@@ -19,6 +19,8 @@
 }
 ```
 
+添加完毕后，重启 Docker。
+
 ## 制作镜像
 
 制作镜像的方式有基于 Dockerfile 和 `docker commit`命令两种形式。我们这里推荐基于 Dockerfile 方式，`docker commit`方式请参考[官方文档](https://docs.docker.com/engine/reference/commandline/commit/)。
@@ -78,11 +80,10 @@ build
 # Dockerfile
 FROM harbor.iiis.co/library/ubuntu-pytorch:1.5.0
 COPY . build
-RUN pip install -r build/requirements.txt
-RUN cd build/samplemod; pip install .
-RUN mkdir -p workspace
-RUN rm -rf build
+RUN pip install -r build/requirements.txt && cd build/samplemod; pip install . && mkdir -p workspace && rm -rf build
 ```
+
+> **_NOTE:_** 这里用单行命令是为了让制作后的镜像历史中不会存在build文件夹（类似于git，即使删去的文件也会在历史中存储，以备未来可能的恢复）。
 
 之后利用`docker`按照 Dockerfile 制作镜像，并标记为`sample:v0`：
 
