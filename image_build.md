@@ -112,6 +112,8 @@ sample          v0         707ab1c88146        30 seconds ago       11.3GB
 
 ![](assets/images/harbor_create_project.jpg)
 
+> **_NOTE:_** 注意这里需要勾选公开，原因是私有集群物理机的 docker 并没有登录用户个人的 Harbor 账户，因此无法拉取私有仓库中的镜像。
+
 假设我们的项目名为 zhangsan，则我们之后的镜像均要 push 到`harbor.iiis.co/zhangsan/`下，首先 tag 我们做好的镜像：
 
 ```bash
