@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  name: my-first-ubuntu-tf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: my-ubuntu-tf
+  template:
+    metadata:
+      labels:
+        name: my-ubuntu-tf
+    spec:
+      hostIPC: true
+      hostNetwork: true      
+      schedulerName: orion-scheduler     #使用 orion-scheduler 的gpu调度器
+      containers:
+      - name: orion-client-hvd
+        imagePullPolicy: Always
+        image: 172.16.112.220:30006/library/orion-client:2.8.2-tf1.15.3-hvd0.19.2-cu10.0-cudnn7-py3.6-ubuntu18.04  # 可自行更改镜像和版本
+        command: ["bash", "-c", "--"]
+        args: ["while true; do sleep 30; done;"]
+        resources: # 描述申请的机器资源
+          limits:
+            cpu: 4 # 最大CPU
+            memory: 10Gi # 最大内存
+            virtaitech.com/gpu: 1  # 最大GPU数目
+          requests:
+            cpu: 4 # 最小需要的CPU数目 （如果目前资源不够，就放弃启动）
+            memory: 8Gi # 最小需要申请的内存的数目（如果目前资源不够，就放弃启动）
+            virtaitech.com/gpu: 1  # 最小需要的GPU数目
+        env:
+          - name : ORION_GMEM
+            value : "10000"  # 每张显卡的显存，单位为M
+          - name : ORION_RATIO
+            value : "100"
+          - name: ORION_VGPU
+            value: "1"
+          - name: ORION_RESERVED #VGPU的共享和独享模式选择，默认0。 0是共享模式，1是独享模式
+            value: "0"
+          - name: ORION_CROSS_NODE #运算是否调用远程VGPU，默认1.  0是不可以调用远程VGPU，1是可以调用远程VGPU。
+            value: "1"
+          - name : ORION_GROUP_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.uid
+          #以下添加内容valueFrom              
+          - name: ORION_K8S_POD_NAME
+            valueFrom:
+              fieldRef:
+               fieldPath: metadata.name
+          - name: ORION_K8S_POD_UID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.uid
+          - name: ORION_K8S_POD_NS
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace                 
